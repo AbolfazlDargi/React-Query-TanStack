@@ -22,7 +22,7 @@ export const FetchOld = () => {
   return (
     <div>
       <ul
-        className="section-accordion">
+        className="z">
         {posts?.map((curElem) => {
           return (
             <li>
