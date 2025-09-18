@@ -3,15 +3,24 @@ import { fetchPosts } from "../../Api/api";
 
 export const FetchOld = () => {
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true)
+  const [isError, setIsError] = useState(false)
 
   const getPostsData = async () => {
     try {
       const res = await fetchPosts();
       console.log(res);
-      res.status == 200 ? setPosts(res.data) : [];
+      if (res.status === 200){
+        setPosts(res.data)
+        setIsLoading(false)
+      }else{
+        setIsError(true)
+      }
     } catch (error) {
       console.log(error);
-      return []
+      setIsError(true)
+      setIsLoading(false)
+      // return []
     }
   };
 
@@ -19,13 +28,24 @@ export const FetchOld = () => {
     getPostsData();
   }, []);
 
+
+  if (isLoading) {
+    return(
+      <p>Loading....</p>
+    )
+  }
+  if (isError){
+    return(
+      <p>something went wrong!</p>
+    )
+  }
+
   return (
     <div>
-      <ul
-        className="z">
+      <ul className="section-accordion">
         {posts?.map((curElem) => {
           return (
-            <li>
+            <li key={curElem.id}>
               <p>{curElem.title}</p>
               <p>{curElem.body}</p>
             </li>

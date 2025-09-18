@@ -10,17 +10,24 @@ export const FetchRQ = () => {
   //   getPostsData();
   // }, []);
 
-  const { data } = useQuery({
+  const { data, isPending, isError, error } = useQuery({
     queryKey: ["posts"], // useState
     queryFn: fetchPosts, // useEffect
   });
+
+  if (isPending) {
+    return <p>Loading...</p>;
+  }
+  if(isError){
+    <p> Error: {error.message || "Something went wrong!"}</p>
+  }
 
   return (
     <div>
       <ul className="section-accordion">
         {data?.map((curElem) => {
           return (
-            <li>
+            <li key={curElem.id}>
               <p>{curElem.title}</p>
               <p>{curElem.body}</p>
             </li>
