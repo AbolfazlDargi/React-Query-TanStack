@@ -9,4 +9,11 @@ export const fetchPosts = async () => {
   return res.status === 200 ? res.data : [];
 };
 
-
+export const fetchInvPost = async (id) => {
+  try {
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : [];
+  } catch (error) {
+    console.log(error);
+  }
+};

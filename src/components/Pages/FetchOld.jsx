@@ -3,24 +3,19 @@ import { fetchPosts } from "../../Api/api";
 
 export const FetchOld = () => {
   const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true)
-  const [isError, setIsError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   const getPostsData = async () => {
     try {
-      const res = await fetchPosts();
-      console.log(res);
-      if (res.status === 200){
-        setPosts(res.data)
-        setIsLoading(false)
-      }else{
-        setIsError(true)
-      }
+      const data = await fetchPosts();
+      setPosts(data);
     } catch (error) {
       console.log(error);
-      setIsError(true)
-      setIsLoading(false)
+      setIsError(true);
       // return []
+    }finally{
+      setIsLoading(false)
     }
   };
 
@@ -28,16 +23,11 @@ export const FetchOld = () => {
     getPostsData();
   }, []);
 
-
   if (isLoading) {
-    return(
-      <p>Loading....</p>
-    )
+    return <p>Loading....</p>;
   }
-  if (isError){
-    return(
-      <p>something went wrong!</p>
-    )
+  if (isError) {
+    return <p>something went wrong!</p>;
   }
 
   return (
