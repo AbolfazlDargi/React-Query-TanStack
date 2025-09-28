@@ -9,7 +9,7 @@ export const  FetchIndv = () => {
 
     const {data, isPending, isError, error} = useQuery({
         queryKey: ["post", id],
-        queryFn: () => fetchInvPost(id)
+        queryFn: () => fetchInvPost()
     })
 
     if(isPending){
