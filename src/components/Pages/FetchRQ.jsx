@@ -1,5 +1,10 @@
-import { deletePost, fetchPosts } from "../../Api/api";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deletePost, fetchPosts, updatePost } from "../../Api/api";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -7,7 +12,7 @@ export const FetchRQ = () => {
   // const [posts, setPost] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
 
- const queryClient =  useQueryClient()
+  const queryClient = useQueryClient();
 
   // useEffect(() => {
   //   getPostsData();
@@ -16,19 +21,35 @@ export const FetchRQ = () => {
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["posts", pageNumber], // useState
     queryFn: () => fetchPosts(pageNumber), // useEffect
-    refetchInterval: 1000,
-    refetchIntervalInBackground: true,
-    placeholderData: keepPreviousData
+    // refetchInterval: 1000,
+    // refetchIntervalInBackground: true,
+    placeholderData: keepPreviousData,
   });
 
-  const DeletMotion =  useMutation({
+  const DeletMotion = useMutation({
     mutationFn: (id) => deletePost(id),
     onSuccess: (data, id) => {
-        queryClient.setQueryData(["posts"], pageNumber, (curElem) => {
-            return curElem?.filter((postId) => postId !== id)
-        })
-    }
-  })
+      console.log(id);
+
+      queryClient.setQueryData(["posts", pageNumber], (curElem) => {
+        return curElem?.filter((postId) => postId.id !== id);
+      });
+    },
+  });
+
+  const updateMotion = useMutation({
+    mutationFn: (id) => updatePost(id),
+    onSuccess: (apiData, postId) => {
+      console.log(apiData, postId);
+      queryClient.setQueriesData(["posts", pageNumber], (postsData) => {
+        return postsData?.map((curPost) => {
+          return curPost.id === postId
+            ? { ...curPost, title: apiData.data.title }
+            : curPost;
+        });
+      });
+    },
+  });
 
   if (isPending) {
     return <p>Loading...</p>;
@@ -49,16 +70,17 @@ export const FetchRQ = () => {
                 <p>{title}</p>
                 <p>{body}</p>
               </NavLink>
-              <button onClick={() => DeletMotion.mutate(id) }>Delete</button>
+              <button onClick={() => DeletMotion.mutate(id)}>Delete</button>
+              <button onClick={() => updateMotion.mutate(id)}>Update</button>
             </li>
           );
         })}
       </ul>
 
       <div className="pagination-section container">
-        <button onClick={() => setPageNumber((prev) => prev - 1)}>prev</button>
+        <button onClick={() => setPageNumber((prev) => prev - 3)}>prev</button>
         <h2>{pageNumber}</h2>
-        <button onClick={() => setPageNumber((prev) => prev + 1)}>Next</button>
+        <button onClick={() => setPageNumber((prev) => prev + 3)}>Next</button>
       </div>
     </div>
   );
