@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchUser } from "../../Api/api";
 import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 
 export const InfiniteScroll = () => {
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
